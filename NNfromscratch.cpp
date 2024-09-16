@@ -163,7 +163,7 @@ struct matrix {
     void print() {
         for (const auto& row : data) {
             for (const auto& elem : row) {
-                cout << fixed<<setprecision(16) <<elem << " ";
+                cout <<elem << " ";
             }
             cout << endl;
         }
@@ -172,7 +172,7 @@ struct matrix {
     void print(int n, int m) {
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < m; j++) {
-                cout << data[i][j] << " ";
+                cout <<fixed<<setprecision(16) << data[i][j] << " ";
             }
             cout << endl;
         }
@@ -192,13 +192,8 @@ struct matrix {
         int x = 0;
         for (auto& row : data) {
             for (auto& elem : row) {
-                x++;
-                if(x%2)
-                    elem = -0.3;
-                else
-                    elem = 0.3;
-                // int a = Rand(0,3442342) % 100;
-                // elem = (long double)(a - 50) / 100.0000; // Random values between -1 and 1
+                int a = Rand(0,3442342) % 100;
+                elem = (long double)(a - 50) / 100.0000; // Random values between -1 and 1
             }
         }
     }
@@ -237,18 +232,34 @@ struct matrix {
         return result;
     }
 
+    // long double sum() {
+    //     long double total = 0;
+    //     for (const auto& row : data) {
+    //         for (const auto& elem : row) {
+    //             total += elem;
+    //         }
+    //     }
+    //     return total;
+    // }
+
+    long double pairwise_sum(const std::vector<long double>& data, int start, int end) {
+        if (start == end) {
+            return data[start];
+        }
+        int mid = start + (end - start) / 2;
+        long double left_sum = pairwise_sum(data, start, mid);
+        long double right_sum = pairwise_sum(data, mid + 1, end);
+        return left_sum + right_sum;
+    }
+
     long double sum() {
         long double total = 0;
-        for (const auto& row : data) {
-            for (const auto& elem : row) {
-                total += elem;
-                if(total == 0.0000)
-                    cout<<"cliped"<<endl;
-            }
+        for (int i = 0; i < data.size(); i++) {
+            total += pairwise_sum(data[i], 0, data[i].size() - 1);
         }
         return total;
-        
     }
+
 
 
     matrix argmax_eachcol() {
@@ -326,10 +337,11 @@ public:
         dZ2 = A2 - one_hot_Y;
         dW2 = dZ2 * (A1.transpose()) * (1.000/m) ;
         db2 = (1.000/m) * dZ2.sum();
-        dZ2.print_shape();
         matrix temp = (Z1 > 0);
         dZ1 = W2.transpose() * dZ2;
-        dZ1.print(3,3);
+       // W2.transpose().print(3,3);
+        //dZ2.print(3,3);
+       // dZ1.print();
         dZ1.mul_elementwise(temp);
         dW1 =  dZ1* X_train.transpose()  * (1.000/m);
         db1 = (1.000/m) * dZ1.sum();
@@ -384,14 +396,14 @@ public:
 
     void train() {
         for (int i = 0; i < epochs; i++) {
-           // cout<< "Epoch: " << i + 1 << endl;
+            cout<< "Epoch: " << i + 1 << endl;
             forward();
-           // cout<<"forward pass done"<<endl;
+            cout<<"forward pass done"<<endl;
             backward();
-           // cout<<"backward pass done"<<endl;
+            cout<<"backward pass done"<<endl;
             update();
-            //cout<<"update done"<<endl;
-            //cout<<accuracy(X_train)<<"% accuracy after epoch "<<i+1<<endl;
+            cout<<"update done"<<endl;
+            cout<<accuracy(X_train)<<"% accuracy after epoch "<<i+1<<endl;
         }
     }
 };
@@ -436,7 +448,7 @@ int main()
     // close the file after read opeartion is complete 
     file.close();
     cout<<"Succesfully read "<<row<<" rows"<<endl;
-    //freopen("data/out.out", "w", stdout);
+   // freopen("data/out.out", "w", stdout);
     matrix X_train(42000, 784);
     for(int i = 0; i < 42000; i++) {
         for(int j = 1; j < 785; j++) {
@@ -449,7 +461,7 @@ int main()
         Y_train.data[i][0] = stoi(dataa[i+1][0]); // Normalize the data
     }
     Y_train = Y_train.transpose();
-    NeuralNetwork net(X_train, Y_train, 0.001, 1);
+    NeuralNetwork net(X_train, Y_train, 0.3, 1000);
     net.train();
 }
 
