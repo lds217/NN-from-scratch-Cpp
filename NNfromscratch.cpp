@@ -14,9 +14,12 @@ using namespace std;
 /**
  * 2 layers Neural Network from scratch in C++
  * 
+ * Due to lack of small floating point precision in C++, the accuracy of the model is not as good as Python. Or I just suck!
+ * 
  * @author Dat Le Purdue CS 28
  * @version September 13, 2024
  */
+
 
 long long Rand(long long l, long long h)
 {
@@ -172,7 +175,7 @@ struct matrix {
     void print(int n, int m) {
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < m; j++) {
-                cout <<fixed<<setprecision(16) << data[i][j] << " ";
+                cout <<fixed<< setprecision(16) << data[i][j] << " ";
             }
             cout << endl;
         }
@@ -323,7 +326,6 @@ public:
     }
 
     matrix one_hot_encode(matrix Y) {
-        // One hot encoding for Y_train
         matrix one_hot_Y(10, Y.data[0].size());
         for (int i = 0; i < Y.data[0].size(); i++) {
             one_hot_Y.data[Y.data[0][i]][i] = 1;
@@ -339,16 +341,12 @@ public:
         db2 = (1.000/m) * dZ2.sum();
         matrix temp = (Z1 > 0);
         dZ1 = W2.transpose() * dZ2;
-       // W2.transpose().print(3,3);
-        //dZ2.print(3,3);
-       // dZ1.print();
         dZ1.mul_elementwise(temp);
         dW1 =  dZ1* X_train.transpose()  * (1.000/m);
         db1 = (1.000/m) * dZ1.sum();
     };
 
     void update() {
-        // Update weights and biases
         W1 = W1 - (dW1 * learning_rate);  
         W2 = W2 - (dW2 * learning_rate);
         b1 = b1 - (db1 * learning_rate);
@@ -356,7 +354,6 @@ public:
     }
 
     matrix predict(matrix X) {
-        // Predict the output for a given input
         Z1 = (W1 * X) + b1 ;
         A1 = Z1.ReLU();
         Z2 = (W2 * A1) + b2;
@@ -365,7 +362,6 @@ public:
     }
 
     long double accuracy(matrix X) {
-        // Calculate accuracy
         int correct = 0;
         matrix predicted=predict(X);
         for (int i = 0; i < Y_train.data[0].size(); i++) {
@@ -377,7 +373,6 @@ public:
     }
 
     long double mse(matrix Y) {
-        // Mean Squared Error
         long double error = 0;
         for (int i = 0; i < Y.data[0].size(); i++) {
             error += pow(A2.data[i][0] - Y.data[i][0], 2);
@@ -386,7 +381,6 @@ public:
     }
 
     long double cross_entropy(matrix Y) {
-        // Cross-entropy loss
         long double loss = 0;
         for (int i = 0; i < Y.data[0].size(); i++) {
             loss -= Y.data[i][0] * log(A2.data[i][0]);
@@ -410,7 +404,6 @@ public:
 
 
 matrix one_hot_encode(matrix Y) {
-        // One hot encoding for Y_train
         matrix one_hot_Y(10, Y.data[0].size());
         for (int i = 0; i < Y.data[0].size(); i++) {
             one_hot_Y.data[Y.data[0][i]][i] = 1;
@@ -429,11 +422,9 @@ int main()
         cerr << "Error opening file!" << endl;
         return 1;
     }
-    // Define a 2D array to store the CSV data
     
     string line;
     int row = 0;
-    // Store the CSV data from the CSV file to the 2D array
     while (getline(file, line)) {
         stringstream ss(line);
         string cell;
@@ -444,24 +435,20 @@ int main()
         }
         row++;
     }
-    //cout<<row;
-    // close the file after read opeartion is complete 
     file.close();
     cout<<"Succesfully read "<<row<<" rows"<<endl;
-   // freopen("data/out.out", "w", stdout);
     matrix X_train(42000, 784);
     for(int i = 0; i < 42000; i++) {
         for(int j = 1; j < 785; j++) {
-            X_train.data[i][j-1] = stoi(dataa[i+1][j]) / 255.0; // Normalize the data
+            X_train.data[i][j-1] = stoi(dataa[i+1][j]) / 255.0; 
         }
     }
     X_train = X_train.transpose();
-    matrix Y_train(42000, 1); // read from csv
+    matrix Y_train(42000, 1); 
     for(int i = 0; i < 42000; i++) {
-        Y_train.data[i][0] = stoi(dataa[i+1][0]); // Normalize the data
+        Y_train.data[i][0] = stoi(dataa[i+1][0]); 
     }
     Y_train = Y_train.transpose();
     NeuralNetwork net(X_train, Y_train, 0.3, 1000);
     net.train();
 }
-
