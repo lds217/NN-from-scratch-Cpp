@@ -15,7 +15,7 @@ using namespace std;
  * 2 layers Neural Network from scratch in C++
  * 
  * Due to lack of small floating point precision in C++, the accuracy of the model is not as good as Python. Or I just suck!
- * 
+ * 76.3119% accuracy after epoch 307
  * @author Dat Le Purdue CS 28
  * @version September 13, 2024
  */
