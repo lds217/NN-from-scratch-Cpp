@@ -325,12 +325,11 @@ public:
         matrix one_hot_Y = one_hot_encode(Y_train);
         dZ2 = A2 - one_hot_Y;
         dW2 = dZ2 * (A1.transpose()) * (1.000/m) ;
-        dZ2.print();
         db2 = (1.000/m) * dZ2.sum();
-        //cout<<dZ2.sum()<<endl;
-        //cout<<db2<<endl;
+        dZ2.print_shape();
         matrix temp = (Z1 > 0);
         dZ1 = W2.transpose() * dZ2;
+        dZ1.print(3,3);
         dZ1.mul_elementwise(temp);
         dW1 =  dZ1* X_train.transpose()  * (1.000/m);
         db1 = (1.000/m) * dZ1.sum();
@@ -390,7 +389,7 @@ public:
            // cout<<"forward pass done"<<endl;
             backward();
            // cout<<"backward pass done"<<endl;
-           // update();
+            update();
             //cout<<"update done"<<endl;
             //cout<<accuracy(X_train)<<"% accuracy after epoch "<<i+1<<endl;
         }
@@ -437,22 +436,19 @@ int main()
     // close the file after read opeartion is complete 
     file.close();
     cout<<"Succesfully read "<<row<<" rows"<<endl;
-    freopen("data/out.out", "w", stdout);
+    //freopen("data/out.out", "w", stdout);
     matrix X_train(42000, 784);
     for(int i = 0; i < 42000; i++) {
         for(int j = 1; j < 785; j++) {
             X_train.data[i][j-1] = stoi(dataa[i+1][j]) / 255.0; // Normalize the data
         }
     }
-    //cout<<data[42000-1][785-1]<<endl;
     X_train = X_train.transpose();
     matrix Y_train(42000, 1); // read from csv
     for(int i = 0; i < 42000; i++) {
         Y_train.data[i][0] = stoi(dataa[i+1][0]); // Normalize the data
     }
     Y_train = Y_train.transpose();
-    //cout<<Y_train.data[0][42000-1]<<endl;
-    //matrix a(2,2);
     NeuralNetwork net(X_train, Y_train, 0.001, 1);
     net.train();
 }

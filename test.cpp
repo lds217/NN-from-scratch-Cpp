@@ -3,6 +3,7 @@ using namespace std;
 
 int main()
 {
-    double a = 0.0004234545434;
+    double a = 0.014;
     cout<<a;
+    return 0;
 }
