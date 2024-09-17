@@ -403,14 +403,6 @@ public:
 };
 
 
-matrix one_hot_encode(matrix Y) {
-        matrix one_hot_Y(10, Y.data[0].size());
-        for (int i = 0; i < Y.data[0].size(); i++) {
-            one_hot_Y.data[Y.data[0][i]][i] = 1;
-        }
-        return one_hot_Y;
-    }
-
 const int MAX_ROWS = 42001;
 const int MAX_COLS = 785;
 string dataa[MAX_ROWS][MAX_COLS];
